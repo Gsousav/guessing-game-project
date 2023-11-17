@@ -1,4 +1,4 @@
-const readline = require('node:readline');
+const readline = require('readline');
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -15,32 +15,39 @@ const checkGuess = (number, secretNumber) => {
     } else {
         console.log("You win!");
         return true;
-    }   
-}
+    }
+};
 
+let numAttempts;
 
-function askGuess () {
+function askGuess() {
     rl.question("Enter a guess: ", (guess) => {
         const userGuess = Number(guess);
 
         if (isNaN(userGuess)) {
-            console.log("please enter a valid number");
-            askGuess();
-        }
-
-        const isCorrect = checkGuess(userGuess);
-
-        if (!isCorrect) {
+            console.log("Please enter a valid number");
             askGuess();
         } else {
-            rl.close();
+            const isCorrect = checkGuess(userGuess, secretNumber);
+
+            if (!isCorrect && numAttempts > 1) {
+                numAttempts--;
+                askGuess();
+            } else if (numAttempts === 1) {
+                console.log(`You lose. No more attempts left. The correct number was ${secretNumber}`);;
+                rl.close();
+            } else {
+                rl.close();
+            }
         }
     });
 }
 
 const randomInRange = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+};
+
+let secretNumber; // Define secretNumber in the global scope
 
 function askRange() {
     rl.question("Enter a minimum number: ", (min) => {
@@ -54,11 +61,25 @@ function askRange() {
                 askRange();
             } else {
                 console.log(`I'm thinking of a number between ${lowerBound} and ${upperBound}`);
-                const secretNumber = randomInRange(lowerBound, upperBound);
-                askGuess(secretNumber);
+                secretNumber = randomInRange(lowerBound, upperBound);
+                askGuess();
             }
         });
     });
 }
 
-askRange();
+function askLimit () {
+    rl.question("Enter the number of attempts: ", (attempts) => {
+        numAttempts = Number(attempts);
+
+        if (isNaN(numAttempts) || numAttempts <= 0) {
+            console.log("Please enter a valid number of attempts greater than 0.");
+            askLimit();
+        } else {
+            askRange();
+        }
+    });
+}
+
+askLimit();
+
