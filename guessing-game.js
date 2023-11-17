@@ -20,4 +20,14 @@ const checkGuess = (number) => {
     }   
 }
 
-checkGuess(6);
+
+function askGuess () {
+    rl.question("Enter a guess: ", (guess) => {
+        const userGuess = Number(guess);
+
+        checkGuess(userGuess);
+        rl.close();
+    });
+}
+
+askGuess();
