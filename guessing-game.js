@@ -15,7 +15,7 @@ const checkGuess = (number) => {
         console.log("Too low!");
         return false;
     } else {
-        console.log("Correct, you win!");
+        console.log("You win!");
         return true;
     }   
 }
@@ -25,8 +25,18 @@ function askGuess () {
     rl.question("Enter a guess: ", (guess) => {
         const userGuess = Number(guess);
 
-        checkGuess(userGuess);
-        rl.close();
+        if (isNaN(userGuess)) {
+            console.log("please enter a valid number");
+            askGuess();
+        }
+
+        const isCorrect = checkGuess(userGuess);
+
+        if (!isCorrect) {
+            askGuess();
+        } else {
+            rl.close();
+        }
     });
 }
 
